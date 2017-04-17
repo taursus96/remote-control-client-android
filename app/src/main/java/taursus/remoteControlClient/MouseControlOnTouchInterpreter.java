@@ -19,6 +19,9 @@ public class MouseControlOnTouchInterpreter implements IOnTouchListener {
     protected boolean releaseLeftButtonOnPointerUp = false;
     protected long lastPointerDownTime = 0;
     protected short twoTimesClickTime = 200;
+
+    protected float scrollSensitivity = 0.1f;
+    protected float scrollAmount = 0f;
 	
 	public MouseControlOnTouchInterpreter(IMouseControl mouseControl) {
 		this.mouseControl = mouseControl;
@@ -64,7 +67,7 @@ public class MouseControlOnTouchInterpreter implements IOnTouchListener {
 
     protected void actionMove(MotionEvent ev) {
         if(this.pointersDown > 1) {
-            this.mouseControl.scroll((short)(ev.getRawY() - this.touchLastMovePositionY));
+            scroll(ev.getRawY() - this.touchLastMovePositionY);
         } else {
             short moveX = (short)(ev.getRawX() - this.touchLastMovePositionX);
             short moveY = (short)(ev.getRawY() - this.touchLastMovePositionY);
@@ -73,6 +76,14 @@ public class MouseControlOnTouchInterpreter implements IOnTouchListener {
 
         this.touchLastMovePositionX = ev.getRawX();
         this.touchLastMovePositionY = ev.getRawY();
+    }
+
+    protected void scroll(float amount) {
+        this.scrollAmount += amount * this.scrollSensitivity;
+
+        int scroll = (int) this.scrollAmount;
+        this.mouseControl.scroll((short) scroll);
+        this.scrollAmount -= scroll;
     }
 
 	@Override
