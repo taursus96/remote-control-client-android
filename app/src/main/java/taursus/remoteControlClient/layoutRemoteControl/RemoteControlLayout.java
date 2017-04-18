@@ -6,6 +6,9 @@ import taursus.remoteControlClient.IOnKeyListener;
 import taursus.remoteControlClient.IOnTouchListener;
 import taursus.remoteControlClient.KeyboardControlEventSender;
 import taursus.remoteControlClient.KeyboardControlOnKeyInterpreter;
+import taursus.remoteControlClient.MouseMovementSensitivitySettingObserver;
+import taursus.remoteControlClient.ScrollSensitivitySettingObserver;
+import taursus.remoteControlClient.activities.AppBaseActivity;
 import taursus.remoteControlClient.simpleFramework.LayoutBase;
 import taursus.remoteControlClient.MouseControlEventSender;
 import taursus.remoteControlClient.MouseControlOnTouchInterpreter;
@@ -29,11 +32,17 @@ public class RemoteControlLayout extends LayoutBase {
     @Override
     protected void onInitialized() {
         Client client = this.getActivity().getClient();
+
         IEventDataSerializer serializer = EventDataSerializer.getInstance();
+
         IMouseControl mouseControlEventSender = new MouseControlEventSender(client, serializer);
         IKeyboardControl keyboardControlEventSender = new KeyboardControlEventSender(client, serializer, new AndroidToPcKeyCodeConverter());
-        IOnTouchListener mouseControlTouchInterpreter = new MouseControlOnTouchInterpreter(mouseControlEventSender);
+
+        MouseControlOnTouchInterpreter mouseControlTouchInterpreter = new MouseControlOnTouchInterpreter(mouseControlEventSender);
         IOnKeyListener keyboardControlTouchInterpreter = new KeyboardControlOnKeyInterpreter(keyboardControlEventSender);
+
+        ScrollSensitivitySettingObserver scrollSensitivitySettingObserver = new ScrollSensitivitySettingObserver(AppBaseActivity.settingsRepository, mouseControlTouchInterpreter);
+        MouseMovementSensitivitySettingObserver mouseMovementSensitivitySettingObserver = new MouseMovementSensitivitySettingObserver(AppBaseActivity.settingsRepository, mouseControlTouchInterpreter);
 
         registerView(new TouchView(mouseControlTouchInterpreter));
         registerView(new KeyboardShowButton(keyboardControlTouchInterpreter));

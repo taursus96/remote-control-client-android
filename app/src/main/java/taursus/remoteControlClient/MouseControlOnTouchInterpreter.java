@@ -2,8 +2,6 @@ package taursus.remoteControlClient;
 
 import taursus.remoteControl.*;
 
-import android.util.Log;
-import android.util.TimeUtils;
 import android.view.MotionEvent;
 
 public class MouseControlOnTouchInterpreter implements IOnTouchListener {
@@ -21,11 +19,23 @@ public class MouseControlOnTouchInterpreter implements IOnTouchListener {
     protected short twoTimesClickTime = 200;
 
     protected float scrollSensitivity = 0.1f;
-    protected float scrollAmount = 0f;
+    protected float accumulatedScrollAmount = 0f;
+
+    protected float mouseMovementSensitivity = 1f;
+    protected float accumulatedMouseMoveX = 0f;
+    protected float accumulatedMouseMoveY = 0f;
 	
 	public MouseControlOnTouchInterpreter(IMouseControl mouseControl) {
 		this.mouseControl = mouseControl;
 	}
+
+	public void setScrollSensitivity(float scrollSensitivity) {
+        this.scrollSensitivity = scrollSensitivity;
+    }
+
+    public void setMouseMovementSensitivity(float mouseMovementSensitivity) {
+        this.mouseMovementSensitivity = mouseMovementSensitivity;
+    }
 
 	protected void actionDown(MotionEvent ev) {
         this.touchStartingPositionX = ev.getRawX();
@@ -69,21 +79,34 @@ public class MouseControlOnTouchInterpreter implements IOnTouchListener {
         if(this.pointersDown > 1) {
             scroll(ev.getRawY() - this.touchLastMovePositionY);
         } else {
-            short moveX = (short)(ev.getRawX() - this.touchLastMovePositionX);
-            short moveY = (short)(ev.getRawY() - this.touchLastMovePositionY);
-            this.mouseControl.moveCursor(moveX, moveY);
+            float moveX = ev.getRawX() - this.touchLastMovePositionX;
+            float moveY = ev.getRawY() - this.touchLastMovePositionY;
+            mouseMove(moveX, moveY);
         }
 
         this.touchLastMovePositionX = ev.getRawX();
         this.touchLastMovePositionY = ev.getRawY();
     }
 
-    protected void scroll(float amount) {
-        this.scrollAmount += amount * this.scrollSensitivity;
+    protected void mouseMove(float moveX, float moveY) {
+        this.accumulatedMouseMoveX += moveX * this.mouseMovementSensitivity;
+        this.accumulatedMouseMoveY += moveY * this.mouseMovementSensitivity;
 
-        int scroll = (int) this.scrollAmount;
-        this.mouseControl.scroll((short) scroll);
-        this.scrollAmount -= scroll;
+        short currentMoveX = (short) this.accumulatedMouseMoveX;
+        short currentMoveY = (short) this.accumulatedMouseMoveY;
+
+        this.mouseControl.moveCursor(currentMoveX, currentMoveY);
+
+        this.accumulatedMouseMoveX -= currentMoveX;
+        this.accumulatedMouseMoveY -= currentMoveY;
+    }
+
+    protected void scroll(float amount) {
+        this.accumulatedScrollAmount += amount * this.scrollSensitivity;
+
+        short scroll = (short) this.accumulatedScrollAmount;
+        this.mouseControl.scroll(scroll);
+        this.accumulatedScrollAmount -= scroll;
     }
 
 	@Override

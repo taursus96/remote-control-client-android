@@ -1,8 +1,11 @@
 package taursus.remoteControlClient.simpleFramework;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.EditText;
 
 public abstract class ViewBase {
     protected LayoutBase layout;
@@ -42,6 +45,22 @@ public abstract class ViewBase {
                 public boolean onTouch(View v, MotionEvent ev) {
                     return ((IViewOnTouchListener) ViewBase.this).onTouch(v, ev);
                 }
+            });
+        }
+
+        if(this instanceof IViewAfterTextChangedListener) {
+            EditText editText = (EditText) getView();
+            editText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void afterTextChanged(Editable s) {
+                    ((IViewAfterTextChangedListener)ViewBase.this).afterTextChanged(s);
+                }
+
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {}
             });
         }
     }

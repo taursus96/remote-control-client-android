@@ -24,8 +24,8 @@ public class RemoteControlActivity extends ActivityBase {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        int port = getIntent().getIntExtra("port", 4000);
-        String host = getIntent().getStringExtra("host");
+        int port = AppBaseActivity.settingsRepository.getInt("port", 4000);
+        String host = AppBaseActivity.settingsRepository.get("host", "10.0.2.2");
 
         ClientObserver clientObserver = new ClientObserver(this, this.client);
 
