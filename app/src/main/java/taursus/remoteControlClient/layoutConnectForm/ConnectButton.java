@@ -33,10 +33,10 @@ public class ConnectButton extends ViewBase implements IViewOnClickListener {
         int port = Integer.valueOf(((EditText)portEditText.getView()).getText().toString());
 
         saveFormDataInSettingsRepository(host, port);
-        startRemoteControlActivity(host, port);
+        startRemoteControlActivity();
     }
 
-    protected void startRemoteControlActivity(String host, int port) {
+    protected void startRemoteControlActivity() {
         Intent intent = new Intent(this.layout.getActivity().getBaseContext(), RemoteControlActivity.class);
         this.layout.getActivity().startActivity(intent);
     }
