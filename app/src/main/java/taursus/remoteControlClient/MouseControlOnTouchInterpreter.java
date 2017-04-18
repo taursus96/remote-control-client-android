@@ -2,8 +2,6 @@ package taursus.remoteControlClient;
 
 import taursus.remoteControl.*;
 
-import android.util.Log;
-import android.util.TimeUtils;
 import android.view.MotionEvent;
 
 public class MouseControlOnTouchInterpreter implements IOnTouchListener {
@@ -21,7 +19,7 @@ public class MouseControlOnTouchInterpreter implements IOnTouchListener {
     protected short twoTimesClickTime = 200;
 
     protected float scrollSensitivity = 0.1f;
-    protected float scrollAmount = 0f;
+    protected float accumulatedScrollAmount = 0f;
 	
 	public MouseControlOnTouchInterpreter(IMouseControl mouseControl) {
 		this.mouseControl = mouseControl;
@@ -83,11 +81,11 @@ public class MouseControlOnTouchInterpreter implements IOnTouchListener {
     }
 
     protected void scroll(float amount) {
-        this.scrollAmount += amount * this.scrollSensitivity;
+        this.accumulatedScrollAmount += amount * this.scrollSensitivity;
 
-        int scroll = (int) this.scrollAmount;
+        int scroll = (int) this.accumulatedScrollAmount;
         this.mouseControl.scroll((short) scroll);
-        this.scrollAmount -= scroll;
+        this.accumulatedScrollAmount -= scroll;
     }
 
 	@Override
