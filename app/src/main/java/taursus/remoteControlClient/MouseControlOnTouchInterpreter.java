@@ -27,6 +27,10 @@ public class MouseControlOnTouchInterpreter implements IOnTouchListener {
 		this.mouseControl = mouseControl;
 	}
 
+	public void setScrollSensitivity(float scrollSensitivity) {
+        this.scrollSensitivity = scrollSensitivity;
+    }
+
 	protected void actionDown(MotionEvent ev) {
         this.touchStartingPositionX = ev.getRawX();
         this.touchStartingPositionY = ev.getRawY();

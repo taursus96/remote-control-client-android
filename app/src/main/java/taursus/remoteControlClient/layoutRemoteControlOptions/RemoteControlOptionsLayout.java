@@ -38,5 +38,6 @@ public class RemoteControlOptionsLayout extends LayoutBase {
         registerView(new VolumeDownButton(optionsControl));
         registerView(new VolumeUpButton(optionsControl));
         registerView(new SoundMuteButton(optionsControl));
+        registerView(new SettingsShowButton());
     }
 }
