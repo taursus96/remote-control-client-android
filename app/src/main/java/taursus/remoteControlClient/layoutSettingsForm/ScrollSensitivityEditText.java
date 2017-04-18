@@ -6,9 +6,10 @@ import android.widget.EditText;
 
 import taursus.remoteControlClient.ISettingsRepository;
 import taursus.remoteControlClient.R;
+import taursus.remoteControlClient.simpleFramework.IViewAfterTextChangedListener;
 import taursus.remoteControlClient.simpleFramework.ViewBase;
 
-public class ScrollSensitivityEditText extends ViewBase {
+public class ScrollSensitivityEditText extends ViewBase implements IViewAfterTextChangedListener {
     ISettingsRepository settingsRepository;
 
     public ScrollSensitivityEditText(ISettingsRepository settingsRepository) {
@@ -25,31 +26,15 @@ public class ScrollSensitivityEditText extends ViewBase {
     public void onInitialized() {
         float defaultScrollSensitivity = this.settingsRepository.getFloat("scrollSensitivity", 0.1f);
         this.getView().setText(String.valueOf(defaultScrollSensitivity));
-
-        this.getView().addTextChangedListener(new TextWatcher() {
-            @Override
-            public void afterTextChanged(Editable s) {
-                ScrollSensitivityEditText.this.onTextChanged();
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-        });
     }
 
-    protected void onTextChanged() {
+    public void afterTextChanged(Editable s) {
         String sensitivityString = this.getView().getText().toString();
 
-        try
-        {
+        try {
             float sensitivity = Float.valueOf(sensitivityString);
             this.settingsRepository.setFloat("scrollSensitivity", sensitivity);
-        }
-        catch(NumberFormatException e)
-        {
+        } catch(NumberFormatException e) {
 
         }
     }

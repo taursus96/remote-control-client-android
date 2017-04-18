@@ -6,9 +6,10 @@ import android.widget.EditText;
 
 import taursus.remoteControlClient.ISettingsRepository;
 import taursus.remoteControlClient.R;
+import taursus.remoteControlClient.simpleFramework.IViewAfterTextChangedListener;
 import taursus.remoteControlClient.simpleFramework.ViewBase;
 
-public class MouseMovementSensitivityEditText extends ViewBase {
+public class MouseMovementSensitivityEditText extends ViewBase implements IViewAfterTextChangedListener {
     ISettingsRepository settingsRepository;
 
     public MouseMovementSensitivityEditText(ISettingsRepository settingsRepository) {
@@ -25,31 +26,15 @@ public class MouseMovementSensitivityEditText extends ViewBase {
     public void onInitialized() {
         float defaultMouseMovementSensitivity = this.settingsRepository.getFloat("mouseMovementSensitivity", 1f);
         this.getView().setText(String.valueOf(defaultMouseMovementSensitivity));
-
-        this.getView().addTextChangedListener(new TextWatcher() {
-            @Override
-            public void afterTextChanged(Editable s) {
-                MouseMovementSensitivityEditText.this.onTextChanged();
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-        });
     }
 
-    protected void onTextChanged() {
+    public void afterTextChanged(Editable s) {
         String sensitivityString = this.getView().getText().toString();
 
-        try
-        {
+        try {
             float sensitivity = Float.valueOf(sensitivityString);
             this.settingsRepository.setFloat("mouseMovementSensitivity", sensitivity);
-        }
-        catch(NumberFormatException e)
-        {
+        } catch(NumberFormatException e) {
 
         }
     }
